@@ -32,7 +32,7 @@ void _start(void) {
         hcf();
     }
 
-    printf("haaaello\n");
+    printf("%s[yayos] c entry\n", KMAG);
 
     hcf();
 }
