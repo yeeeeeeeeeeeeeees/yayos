@@ -1,8 +1,9 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
+
 #include "limine.h"
-#include "util/print.h"
+#include "../klib/printf.h"
 
 __attribute__((used, section(".requests")))
 static volatile LIMINE_BASE_REVISION(2);
@@ -31,7 +32,7 @@ void _start(void) {
         hcf();
     }
 
-    printf("hello\n");
+    printf("haaaello\n");
 
     hcf();
 }
