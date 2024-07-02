@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-
+#include "../interrupts/idt.h"
 #include "limine.h"
 #include "../klib/printf.h"
 
@@ -29,10 +29,15 @@ static void hcf(void) {
 
 void _start(void) {
     if (LIMINE_BASE_REVISION_SUPPORTED == false) {
+        kprintf("%s[yayos] base revision not supported (???), halting", KRED);
         hcf();
     }
 
-    printf("%s[yayos] c entry\n", KMAG);
+    kprintf("%s[yayos] c entry\n", KCYN);
+    init_idt();
+
+    int *ptr = NULL;
+    int value = *ptr;
 
     hcf();
 }

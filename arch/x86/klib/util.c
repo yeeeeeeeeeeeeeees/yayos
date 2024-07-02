@@ -1,6 +1,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "util.h"
+#include "stb_sprintf.h"
+#include "printf.h"
 
 #define QEMU_DEBUG 0xE9
 
@@ -18,6 +20,23 @@ uint8_t inb(uint16_t port)
                    : "Nd"(port)
                    : "memory");
     return ret;
+}
+
+int kprintf(const char *format, ...) {
+    va_list args;
+    char buffer[PRINT_BUF];
+    size_t length;
+
+    va_start(args, format);
+
+    length = vsnprintf(buffer, PRINT_BUF, format, args);
+    for (size_t i = 0; i < length; i++) {
+         putchar(buffer[i]);
+    }
+
+    va_end(args);
+
+    return length;
 }
 
 // mem utils

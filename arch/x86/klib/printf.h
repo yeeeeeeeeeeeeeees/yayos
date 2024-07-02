@@ -10,24 +10,7 @@
 #include "stb_sprintf.h"
 #include "util.h"
 
-int printf(const char *format, ...)
-{
-    va_list args;
-    char buffer[PRINT_BUF];
-    size_t length;
+// Function declaration
+int kprintf(const char *format, ...);
 
-    va_start(args, format);
-
-    length = vsnprintf(buffer, PRINT_BUF, format, args);
-    for (size_t i=0;i<length;i++)
-    {
-         putchar(buffer[i]);
-    }
-
-    va_end(args);
-
-    return length;
-}
-
-
-#endif
+#endif // PRINTF_H
