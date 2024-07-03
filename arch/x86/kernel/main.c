@@ -36,8 +36,7 @@ void _start(void) {
     kprintf("%s[yayos] c entry\n", KCYN);
     init_idt();
 
-    int *ptr = NULL;
-    int value = *ptr;
+    int hello = 1/0;
 
     hcf();
 }

@@ -34,5 +34,9 @@ void init_idt() {
 }
 
 void handle_interrupt(cpu_state *cpu, stack_state *stack) {
-    kprintf("oh no interrupt");
+    switch(stack->error_code) {
+        case 0x06:
+            kprintf("%s[yayos] invalid opcode, maybe division by 0?", KRED);
+            __asm__("cli; hlt");
+    }
 }
