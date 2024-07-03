@@ -1,5 +1,6 @@
 .DS_Store
 *.iso
-arch/*/build
+arch/*/build/bin
+arch/*/build/obj
 arch/*/kernel/limine.h
 limine
