@@ -25,8 +25,8 @@ void set_idt_gate(uintptr_t handler, uint8_t idx) {
 
 void init_idt() {
     idtr_t idtr;
-    idtr.base = (uint64_t)&idtr;
-    idtr.limit = sizeof(idt_entry_t) * 255;
+    idtr.base = (uint64_t)&idt;
+    idtr.limit = sizeof(idt)-1;
     load_traps();
     __asm__("lidt %0"::"m"(idtr));
     __asm__("sti");
@@ -37,6 +37,9 @@ void handle_interrupt(cpu_state *cpu, stack_state *stack) {
     switch(stack->error_code) {
         case 0x06:
             kprintf("%s[yayos] invalid opcode, maybe division by 0?", KRED);
+            __asm__("cli; hlt");
+        default:
+            kprintf("%s[yayos] unhandled interrupt: %d", KRED, stack->error_code);
             __asm__("cli; hlt");
     }
 }
