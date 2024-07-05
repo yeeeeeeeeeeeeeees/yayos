@@ -1,5 +1,3 @@
-# arch/x86/build/GNUmakefile
-
 # Nuke built-in rules and variables.
 override MAKEFLAGS += -rR
 
@@ -53,7 +51,6 @@ override KCFLAGS += \
     -fno-stack-check \
     -fno-lto \
     -fPIE \
-	-g \
     -m64 \
     -march=x86-64 \
     -mno-80387 \
@@ -64,8 +61,7 @@ override KCFLAGS += \
 
 # Internal C preprocessor flags that should not be changed by the user.
 override KCPPFLAGS := \
-    -I ../../../arch/x86/kernel \
-    -I ../../.. \
+    -I src \
     $(KCPPFLAGS) \
     -MMD \
     -MP
@@ -86,18 +82,17 @@ override KNASMFLAGS += \
 
 # Use "find" to glob all *.c, *.S, and *.asm files in the tree and obtain the
 # object and header dependency file names.
-override CFILES := $(shell find -L ../../.. -type f -name '*.c' -not -path '../../../limine/*')
-override ASFILES := $(shell find -L ../../.. -type f -name '*.S')
-override NASMFILES := $(shell find -L ../../.. -type f -name '*.asm')
-override OBJ := $(addprefix obj/,$(CFILES:../../..%.c=%.c.o) $(ASFILES:../../..%.S=%.S.o) $(NASMFILES:../../..%.asm=%.asm.o))
-override HEADER_DEPS := $(addprefix obj/,$(CFILES:../../..%.c=%.c.d) $(ASFILES:../../..%.S=%.S.d))
+override CFILES := $(shell cd src && find -L * -type f -name '*.c')
+override ASFILES := $(shell cd src && find -L * -type f -name '*.S')
+override NASMFILES := $(shell cd src && find -L * -type f -name '*.asm')
+override OBJ := $(addprefix obj/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o) $(NASMFILES:.asm=.asm.o))
+override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S.d))
 
 # Default target.
 .PHONY: all
 all: bin/$(KERNEL)
 
-# Ensure limine.h is fetched and saved properly in kernel directory
-../../../arch/x86/kernel/limine.h:
+src/limine.h:
 	curl -Lo $@ https://github.com/limine-bootloader/limine/raw/trunk/limine.h
 
 # Link rules for the final kernel executable.
@@ -105,26 +100,26 @@ all: bin/$(KERNEL)
 # GNU binutils, for silly reasons, forces the ELF type to ET_EXEC even for
 # relocatable PIEs, if the base load address is non-0.
 # See https://sourceware.org/bugzilla/show_bug.cgi?id=31795 for more information.
-bin/$(KERNEL): linker.ld $(OBJ)
+bin/$(KERNEL): GNUmakefile linker.ld $(OBJ)
 	mkdir -p "$$(dirname $@)"
 	$(KLD) $(OBJ) $(KLDFLAGS) -o $@
-	printf '\x03' | dd of=$@ bs=1 count=1 seek=16 conv=notrunc
+	printf '\003' | dd of=$@ bs=1 count=1 seek=16 conv=notrunc
 
 # Include header dependencies.
 -include $(HEADER_DEPS)
 
 # Compilation rules for *.c files.
-obj/%.c.o: ../../../%.c GNUmakefile ../../../arch/x86/kernel/limine.h
+obj/%.c.o: src/%.c GNUmakefile src/limine.h
 	mkdir -p "$$(dirname $@)"
 	$(KCC) $(KCFLAGS) $(KCPPFLAGS) -c $< -o $@
 
 # Compilation rules for *.S files.
-obj/%.S.o: ../../../%.S GNUmakefile
+obj/%.S.o: src/%.S GNUmakefile
 	mkdir -p "$$(dirname $@)"
 	$(KCC) $(KCFLAGS) $(KCPPFLAGS) -c $< -o $@
 
 # Compilation rules for *.asm (nasm) files.
-obj/%.asm.o: ../../../%.asm GNUmakefile
+obj/%.asm.o: src/%.asm GNUmakefile
 	mkdir -p "$$(dirname $@)"
 	nasm $(KNASMFLAGS) $< -o $@
 
@@ -135,5 +130,4 @@ clean:
 
 .PHONY: distclean
 distclean: clean
-	rm -f ../../../arch/x86/kernel/limine.h
-
+	rm -f src/limine.h

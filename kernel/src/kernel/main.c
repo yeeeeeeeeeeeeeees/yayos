@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "../interrupts/idt.h"
 #include "limine.h"
+#include "../klib/util.h"
 #include "../klib/printf.h"
 
 __attribute__((used, section(".requests")))
@@ -20,13 +21,6 @@ static volatile LIMINE_REQUESTS_START_MARKER;
 __attribute__((used, section(".requests_end_marker")))
 static volatile LIMINE_REQUESTS_END_MARKER;
 
-static void hcf(void) {
-    asm ("cli");
-    for (;;) {
-        asm ("hlt");
-    }
-}
-
 void _start(void) {
     if (LIMINE_BASE_REVISION_SUPPORTED == false) {
         kprintf("%s[yayos] base revision not supported (???), halting", KRED);
@@ -35,8 +29,6 @@ void _start(void) {
 
     kprintf("%s[yayos] c entry\n", KCYN);
     init_idt();
-
-    int hello = 1/0;
 
     hcf();
 }

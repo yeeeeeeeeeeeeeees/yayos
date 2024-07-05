@@ -1,4 +1,5 @@
 #include "idt.h"
+#include "../klib/util.h"
 #include "../klib/printf.h"
 #include <stdint.h>
 
@@ -30,16 +31,12 @@ void init_idt() {
     load_traps();
     __asm__("lidt %0"::"m"(idtr));
     __asm__("sti");
-    kprintf("%s[yayos] idt set up", KCYN);
+    kprintf(KCYN "[info] idt set up\n");
 }
 
-void handle_interrupt(cpu_state *cpu, stack_state *stack) {
-    switch(stack->error_code) {
-        case 0x06:
-            kprintf("%s[yayos] invalid opcode, maybe division by 0?", KRED);
-            __asm__("cli; hlt");
-        default:
-            kprintf("%s[yayos] unhandled interrupt: %d", KRED, stack->error_code);
-            __asm__("cli; hlt");
-    }
+void handle_interrupt(tf *frame) {
+    kprintf(KRED "[error] interrupt occured, halting\n");
+    kprintf(KRED "vector = 0x%x\n", frame->vector);
+    kprintf(KRED "rip = 0x%llx\n", frame->rip);
+    hcf();
 }

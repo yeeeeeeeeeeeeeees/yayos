@@ -22,6 +22,14 @@ uint8_t inb(uint16_t port)
     return ret;
 }
 
+
+void hcf(void) {
+    asm ("cli");
+    for (;;) {
+        asm ("hlt");
+    }
+}
+
 int kprintf(const char *format, ...) {
     va_list args;
     char buffer[PRINT_BUF];

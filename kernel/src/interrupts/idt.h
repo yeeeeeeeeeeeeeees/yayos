@@ -16,7 +16,7 @@ typedef struct idt_entry_t {
     uint64_t reserved_2 : 32;
 } __attribute__((__packed__)) idt_entry_t;
 
-typedef struct {
+typedef struct tf {
     uint64_t rax;
     uint64_t rbx;
     uint64_t rcx;
@@ -32,24 +32,22 @@ typedef struct {
     uint64_t r13;
     uint64_t r14;
     uint64_t r15;
-} __attribute__((__packed__)) cpu_state;
-
-typedef struct {
-    uint64_t error_code;
+    uint64_t vector;
+    uint64_t error;
     uint64_t rip;
     uint64_t cs;
     uint64_t rflags;
     uint64_t rsp;
     uint64_t ss;
-} __attribute__((__packed__)) stack_state;
+}__attribute__((__packed__)) tf;
 
-typedef struct {
+typedef struct idtr_t {
     uint16_t limit;
     uint64_t base;
 } __attribute__((__packed__)) idtr_t;
 
 
-void handle_interrupt(cpu_state *cpu, stack_state *stack);
+void handle_interrupt(tf *frame);
 void init_idt();
 void set_idt_gate(uintptr_t handler, uint8_t idx);
 void load_traps();
