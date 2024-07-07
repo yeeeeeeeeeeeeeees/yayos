@@ -5,6 +5,7 @@
 #include "limine.h"
 #include "../klib/util.h"
 #include "../klib/printf.h"
+#include "../memory/physical.h"
 
 __attribute__((used, section(".requests")))
 static volatile LIMINE_BASE_REVISION(2);
@@ -14,6 +15,7 @@ static volatile struct limine_framebuffer_request framebuffer_request = {
     .id = LIMINE_FRAMEBUFFER_REQUEST,
     .revision = 0
 };
+
 
 __attribute__((used, section(".requests_start_marker")))
 static volatile LIMINE_REQUESTS_START_MARKER;
@@ -29,6 +31,15 @@ void _start(void) {
 
     kprintf("%s[yayos] c entry\n", KCYN);
     init_idt();
+    init_pmm();
+
+    void *page = palloc();
+    pfree(page);
+    void *page2 = palloc();
+    if (page != page2) {
+        kprintf("bad");
+    }
+
 
     hcf();
 }

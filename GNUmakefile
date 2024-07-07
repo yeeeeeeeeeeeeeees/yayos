@@ -10,12 +10,12 @@ all: $(IMAGE_NAME).iso
 all-hdd: $(IMAGE_NAME).hdd
 
 .PHONY: debug
-run: $(IMAGE_NAME).iso
-	tmux new "qemu-system-x86_64 -M q35 -m 2G -cdrom $(IMAGE_NAME).iso -boot d -debugcon stdio -d int -no-reboot -s -S"
+debug: $(IMAGE_NAME).iso
+	qemu-system-x86_64 -M q35 -m 2G -cdrom $(IMAGE_NAME).iso -boot d -debugcon stdio -d int -no-reboot -s -S
 
 .PHONY: run
 run: $(IMAGE_NAME).iso
-	tmux new "qemu-system-x86_64 -M q35 -m 2G -cdrom $(IMAGE_NAME).iso -boot d -debugcon stdio -no-reboot"
+	qemu-system-x86_64 -M q35 -m 2G -cdrom $(IMAGE_NAME).iso -boot d -debugcon stdio -no-reboot
 
 .PHONY: run-uefi
 run-uefi: ovmf $(IMAGE_NAME).iso
