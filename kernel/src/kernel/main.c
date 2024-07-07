@@ -33,13 +33,5 @@ void _start(void) {
     init_idt();
     init_pmm();
 
-    void *page = palloc();
-    pfree(page);
-    void *page2 = palloc();
-    if (page != page2) {
-        kprintf("bad");
-    }
-
-
     hcf();
 }

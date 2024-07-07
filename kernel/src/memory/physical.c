@@ -27,7 +27,7 @@ static void add_page(uint64_t base) {
 }
 
 void *palloc() {
-    void *page_address = (void *)head;
+    void *page_address = (void *)(head-hhdm_request.response->offset);
     if (head == NULL) {
         kprintf(KRED "[critical] out of physical memory\n");
         return (void*)0;
@@ -37,7 +37,7 @@ void *palloc() {
 }
 
 void pfree(void *ptr) {
-    add_page((uint64_t)ptr);
+    add_page((uint64_t)ptr+hhdm_request.response->offset);
 }
 
 void init_pmm() {
