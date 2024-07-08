@@ -1,8 +1,9 @@
 #include <stddef.h>
 #include <stdint.h>
-#include "util.h"
-#include "stb_sprintf.h"
-#include "printf.h"
+
+#include "../include/util.h"
+#include "../include/stb_sprintf.h"
+#include "../include/printf.h"
 
 #define QEMU_DEBUG 0xE9
 

@@ -1,11 +1,13 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include "../interrupts/idt.h"
-#include "limine.h"
-#include "../klib/util.h"
-#include "../klib/printf.h"
-#include "../memory/physical.h"
+
+#include "../include/idt.h"
+#include "../include/util.h"
+#include "../include/printf.h"
+#include "../include/physical.h"
+
+#include "../limine.h"
 
 __attribute__((used, section(".requests")))
 static volatile LIMINE_BASE_REVISION(2);
@@ -25,13 +27,17 @@ static volatile LIMINE_REQUESTS_END_MARKER;
 
 void _start(void) {
     if (LIMINE_BASE_REVISION_SUPPORTED == false) {
-        kprintf("%s[yayos] base revision not supported (???), halting", KRED);
+        kprintf(KRED "[yayos] base revision not supported (???), halting\n");
         hcf();
     }
 
-    kprintf("%s[yayos] c entry\n", KCYN);
+    kprintf(KCYN "[yayos] c entry\n");
+
     init_idt();
+    kprintf(KCYN "[info] idt set up\n");
+
     init_pmm();
+    kprintf(KCYN "[info] pmm set up\n");
 
     hcf();
 }

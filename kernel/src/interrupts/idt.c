@@ -1,7 +1,8 @@
-#include "idt.h"
-#include "../klib/util.h"
-#include "../klib/printf.h"
 #include <stdint.h>
+
+#include "../include/idt.h"
+#include "../include/util.h"
+#include "../include/printf.h"
 
 idt_entry_t idt[256] __attribute__((aligned(0x10)));
 extern uint64_t trap_stubs[256];
@@ -31,7 +32,6 @@ void init_idt() {
     load_traps();
     __asm__("lidt %0"::"m"(idtr));
     __asm__("sti");
-    kprintf(KCYN "[info] idt set up\n");
 }
 
 void handle_interrupt(tf *frame) {

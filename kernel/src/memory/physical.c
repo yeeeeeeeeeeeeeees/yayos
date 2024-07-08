@@ -1,6 +1,7 @@
-#include "../kernel/limine.h"
-#include "../klib/printf.h"
-#include "physical.h"
+#include "../include/printf.h"
+#include "../include/physical.h"
+
+#include "../limine.h"
 
 __attribute__((used, section(".requests")))
 static volatile struct limine_memmap_request memmap_request = {
@@ -45,12 +46,10 @@ void init_pmm() {
         uint64_t entry_base = memmap_request.response->entries[i]->base;
         uint64_t entry_type = memmap_request.response->entries[i]->type;
         uint64_t entry_size = memmap_request.response->entries[i]->length;
-        kprintf(KCYN "[info] entry %d in memmap: 0x%llx | type: %d | size: %llx\n", i, entry_base, entry_type, entry_size);
         if (entry_type == 0) {
             for (uint64_t k=0;k<entry_size;k+=0x1000) {
                 add_page(entry_base+k+hhdm_request.response->offset);
             }
-            kprintf(KCYN "[info] added range starting from %llx to %llx\n", entry_base, entry_base+entry_size);
         }
     }
 }
