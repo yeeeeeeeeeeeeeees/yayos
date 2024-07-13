@@ -1,10 +1,23 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
+<<<<<<< Updated upstream
 #include "../interrupts/idt.h"
 #include "limine.h"
 #include "../klib/util.h"
 #include "../klib/printf.h"
+=======
+
+#include "../include/idt.h"
+
+#include "../include/util.h"
+#include "../include/printf.h"
+
+#include "../include/physical.h"
+#include "../include/virtual.h"
+
+#include "../limine.h"
+>>>>>>> Stashed changes
 
 __attribute__((used, section(".requests")))
 static volatile LIMINE_BASE_REVISION(2);
@@ -29,6 +42,9 @@ void _start(void) {
 
     kprintf("%s[yayos] c entry\n", KCYN);
     init_idt();
+
+    init_paging();
+    kprintf(KCYN "[info] paging set up");
 
     hcf();
 }

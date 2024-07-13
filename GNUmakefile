@@ -10,12 +10,21 @@ all: $(IMAGE_NAME).iso
 all-hdd: $(IMAGE_NAME).hdd
 
 .PHONY: debug
+<<<<<<< Updated upstream
 run: $(IMAGE_NAME).iso
 	tmux new "qemu-system-x86_64 -M q35 -m 2G -cdrom $(IMAGE_NAME).iso -boot d -debugcon stdio -d int -no-reboot -s -S"
 
 .PHONY: run
 run: $(IMAGE_NAME).iso
 	tmux new "qemu-system-x86_64 -M q35 -m 2G -cdrom $(IMAGE_NAME).iso -boot d -debugcon stdio -no-reboot"
+=======
+debug: $(IMAGE_NAME).iso
+	tmux new-session "qemu-system-x86_64 -M q35 -m 2G -cdrom $(IMAGE_NAME).iso -boot d -debugcon stdio -d int -no-reboot -s -S -D log"
+
+.PHONY: run
+run: $(IMAGE_NAME).iso
+	tmux new-session "qemu-system-x86_64 -m 2G -cdrom $(IMAGE_NAME).iso -boot d -debugcon stdio -no-reboot -D log -d int -M smm=off"
+>>>>>>> Stashed changes
 
 .PHONY: run-uefi
 run-uefi: ovmf $(IMAGE_NAME).iso
